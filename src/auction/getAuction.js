@@ -13,7 +13,6 @@ exports.getAuction = async (event) => {
       `getMethod only accept GET method, you tried: ${event.httpMethod}`
     )
   }
-  // All log statements are written to CloudWatch
   console.info('received:', event)
 
   // Get id from pathParameters from APIGateway because of `/{id}` at template.yaml
@@ -36,11 +35,11 @@ exports.getAuction = async (event) => {
   } catch (ResourceNotFoundException) {
     response = {
       statusCode: 404,
-      body: 'Unable to call DynamoDB. Table resource not found.',
+      // body: 'Unable to call DynamoDB. Table resource not found.',
+      body: error.message,
     }
   }
 
-  // All log statements are written to CloudWatch
   console.info(
     `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
   )

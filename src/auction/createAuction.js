@@ -1,3 +1,5 @@
+const { v4: uuid } = require('uuid')
+
 const dynamodb = require('aws-sdk/clients/dynamodb')
 const docClient = new dynamodb.DocumentClient()
 
@@ -12,14 +14,14 @@ exports.createAuction = async (event) => {
       `postMethod only accepts POST method, you tried: ${event.httpMethod} method.`
     )
   }
-  // All log statements are written to CloudWatch
   console.info('received:', event)
 
-  // Get id and name from the body of the request
+  // Get title from the body of the request
   const { title } = JSON.parse(event.body)
   const now = new Date()
 
   const auction = {
+    id: uuid(),
     title,
     status: 'OPEN',
     createdAt: now.toISOString(),
@@ -39,16 +41,16 @@ exports.createAuction = async (event) => {
 
     response = {
       statusCode: 200,
-      body: JSON.stringify(body),
+      body: JSON.stringify(auction),
     }
   } catch (ResourceNotFoundException) {
     response = {
       statusCode: 404,
-      body: 'Unable to call DynamoDB. Table resource not found.',
+      // body: 'Unable to call DynamoDB. Table resource not found.',
+      body: error.message,
     }
   }
 
-  // All log statements are written to CloudWatch
   console.info(
     `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
   )

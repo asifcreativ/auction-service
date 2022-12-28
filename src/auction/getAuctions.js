@@ -1,6 +1,5 @@
 const tableName = process.env.AUCTIONS_TABLE_NAME
 
-// Create a DocumentClient that represents the query to add an item
 const dynamodb = require('aws-sdk/clients/dynamodb')
 const docClient = new dynamodb.DocumentClient()
 
@@ -13,7 +12,6 @@ exports.getAuctions = async (event) => {
       `getAllItems only accept GET method, you tried: ${event.httpMethod}`
     )
   }
-  // All log statements are written to CloudWatch
   console.info('received:', event)
 
   let response = {}
@@ -32,11 +30,11 @@ exports.getAuctions = async (event) => {
   } catch (ResourceNotFoundException) {
     response = {
       statusCode: 404,
-      body: 'Unable to call DynamoDB. Table resource not found.',
+      // body: 'Unable to call DynamoDB. Table resource not found.',
+      body: error.message,
     }
   }
 
-  // All log statements are written to CloudWatch
   console.info(
     `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
   )
